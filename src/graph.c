@@ -2,17 +2,28 @@
 
 typedef struct {
     size_t size;
+    size_t capacity;
     List **adjacencyLists;
 } Graph;
 
 Graph *createGraph(size_t capacity) {
     Graph *graph = (Graph *) calloc(1, sizeof(Graph));
+    graph->capacity = capacity;
     graph->adjacencyLists = (List **) malloc(sizeof(List *) * capacity);
     return graph;
 }
 
 void addNode(Graph *graph, int data) {
     graph->adjacencyLists[graph->size] = createList();
+    if ((graph->size + 1) == graph->capacity) {
+        List **newAdjacencyList = (List **) malloc(sizeof(List *) * graph->capacity * 2);
+        for (size_t i = 0; i < graph->capacity; i++) {
+            newAdjacencyList[i] = graph->adjacencyLists[i];
+        }
+        free(graph->adjacencyLists);
+        graph->adjacencyLists = newAdjacencyList;
+        graph->capacity = graph->capacity * 2;
+    }
     addToList(graph->adjacencyLists[graph->size++], data);
 }
 

@@ -17,6 +17,13 @@ int main() {
     addLine(graph, 5, 11);
 
     addLine(graph, 6, 5);
+
+    addNode(graph, 9);
+    addLine(graph, 1, 9);
+    
+    addNode(graph, 54);
+    addLine(graph, 9, 54);
+
     printGraph(graph);
     freeGraph(graph);
     return 0;
