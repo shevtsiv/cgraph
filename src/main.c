@@ -4,11 +4,11 @@
 
 int main() {
     Graph *graph = createGraph(5);
-    ListNode *node1 = newNode(graph, 1);
-    ListNode *node5 = newNode(graph, 5);
-    ListNode *node10 = newNode(graph, 10);
-    ListNode *node11 = newNode(graph, 11);
-    ListNode *node6 = newNode(graph, 6);
+    addNode(graph, 1);
+    addNode(graph, 5);
+    addNode(graph, 10);
+    addNode(graph, 11);
+    addNode(graph, 6);
     addLine(graph, 1, 5);
     addLine(graph, 1, 6);
     addLine(graph, 1, 10);
@@ -18,5 +18,6 @@ int main() {
 
     addLine(graph, 6, 5);
     printGraph(graph);
+    freeGraph(graph);
     return 0;
 }

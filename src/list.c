@@ -58,3 +58,13 @@ void printList(List *list) {
         node = node->next;
     }
 }
+
+void freeList(List *list) {
+    ListNode *node = list->head;
+    while (node != NULL) {
+        ListNode *next = node->next;
+        free(node);
+        node = next;
+    }
+    free(list);
+}

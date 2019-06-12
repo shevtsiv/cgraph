@@ -25,7 +25,7 @@ TEST(ListTest, AddToList) {
     addToList(list, 5);
     ASSERT_EQ(list->head->data, 1);
     ASSERT_EQ(list->size, 3);
-    free(list);
+    freeList(list);
 }
 
 TEST(ListTest, PopFromList) {
@@ -64,7 +64,7 @@ TEST(GraphTest, CreateGraphTest) {
     ASSERT_NE(graph, nullptr);
     ASSERT_NE(graph->adjacencyLists, nullptr);
     ASSERT_EQ(graph->size, 0);
-    free(graph);
+    freeGraph(graph);
 }
 
 int main(int argc, char **argv) {
