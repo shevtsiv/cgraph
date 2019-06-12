@@ -1,11 +1,9 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "list.c"
 #include "graph.c"
 
-
 int main() {
-    Graph *graph = createGraph();
+    Graph *graph = createGraph(5);
     ListNode *node1 = newNode(graph, 1);
     ListNode *node5 = newNode(graph, 5);
     ListNode *node10 = newNode(graph, 10);

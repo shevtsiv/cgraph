@@ -1,7 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include "../src/graph.c"
-#include "../src/list.c"
 
 // List tests =========================
 
@@ -61,9 +60,10 @@ TEST(ListTest, PopFromList) {
 // Graph tests ========================
 
 TEST(GraphTest, CreateGraphTest) {
-    Graph *graph = createGraph();
+    Graph *graph = createGraph(1);
     ASSERT_NE(graph, nullptr);
-    ASSERT_EQ(graph->head, nullptr);
+    ASSERT_NE(graph->adjacencyLists, nullptr);
+    ASSERT_EQ(graph->size, 0);
     free(graph);
 }
 
