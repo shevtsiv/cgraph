@@ -16,15 +16,6 @@ void addNode(Graph *graph, int data) {
     addToList(graph->adjacencyLists[graph->size++], data);
 }
 
-int indexOf(List *array[], size_t arraySize, int value) {
-    for (size_t i = 0; i < arraySize; i++) {
-        if (array[i]->head->data == value) {
-            return i;
-        }
-    }
-    return -1;
-}
-
 void addLine(Graph *graph, int sourceValue, int destinationValue) {
     size_t sourceIndex = indexOf(graph->adjacencyLists, graph->size, sourceValue);
     if (sourceIndex == -1) {

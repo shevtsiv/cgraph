@@ -59,6 +59,15 @@ void printList(List *list) {
     }
 }
 
+int indexOf(List *array[], size_t arraySize, int value) {
+    for (size_t i = 0; i < arraySize; i++) {
+        if (array[i]->head->data == value) {
+            return i;
+        }
+    }
+    return -1;
+}
+
 void freeList(List *list) {
     ListNode *node = list->head;
     while (node != NULL) {
