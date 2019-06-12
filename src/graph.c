@@ -18,8 +18,8 @@ void addNode(Graph *graph, int data) {
 
 void addLine(Graph *graph, int sourceValue, int destinationValue) {
     size_t sourceIndex = indexOf(graph->adjacencyLists, graph->size, sourceValue);
-    if (sourceIndex == -1) {
-
+    if (sourceIndex == -1 || indexOf(graph->adjacencyLists, graph->size, destinationValue) == -1) {
+        return;
     }
     addToList(graph->adjacencyLists[sourceIndex], destinationValue);
 }
