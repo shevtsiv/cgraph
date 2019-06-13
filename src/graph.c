@@ -89,7 +89,7 @@ int isGraphConnected(Graph *graph) {
 
 void printGraph(Graph *graph) {
     for (size_t i = 0; i < graph->size; i++) {
-        printf("List №%li:\n", i);
+        printf("List №%lu:\n", i);
         printList(graph->adjacencyLists[i]);
         printf("\n");
     }
