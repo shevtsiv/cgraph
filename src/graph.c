@@ -27,7 +27,6 @@ void addNode(Graph *graph, int data) {
     addToList(graph->adjacencyLists[graph->size++], data);
 }
 
-// TODO: Use indexes instead of values?
 void addLine(Graph *graph, int sourceValue, int destinationValue) {
     size_t sourceIndex = indexOf(graph->adjacencyLists, graph->size, sourceValue);
     if (sourceIndex == -1 || indexOf(graph->adjacencyLists, graph->size, destinationValue) == -1) {
@@ -45,58 +44,29 @@ size_t indexOfNode(Graph *graph, int nodeValue) {
     return -1;
 }
 
-void DFS(Graph *graph, int *componentsAmount, int value, int visitedNodes[]) {
-    size_t valueIndex = indexOfNode(graph, value);
-    if (valueIndex == -1) {
+void DFS(Graph *graph, int valueIndex, int visitedNodes[], int mode) {
+    ListNode *nextNode = graph->adjacencyLists[valueIndex]->head->next;
+    if (mode == 1 && nextNode == NULL) {
         return;
     }
     visitedNodes[valueIndex] = 1;
-    if (valueIndex != 0) {
-        (*componentsAmount)--;
-    }
-    printf("Visited: %i\n", value);
-    ListNode *node = graph->adjacencyLists[valueIndex]->head->next;
-    while (node != NULL) {
-        size_t valueIndex1 = indexOfNode(graph, node->data);
-        if (visitedNodes[valueIndex1] == 0) {
-            DFS(graph, componentsAmount, node->data, visitedNodes);
+    while (nextNode != NULL) {
+        // TODO: If we can rely on valueIndex + 1 to get next node, we don't have to do indexOf here
+        size_t nextNodeIndex = indexOfNode(graph, nextNode->data);
+        if (visitedNodes[nextNodeIndex] == 0) {
+            DFS(graph, nextNodeIndex, visitedNodes, mode);
         }
-        node = node->next;
+        nextNode = nextNode->next;
     }
 }
 
-void DFSSecond(Graph *graph, int *amount, int *componentsAmount, int value, int visitedNodes[]) {
-    size_t valueIndex = indexOfNode(graph, value);
-    if (valueIndex == -1) {
-        return;
-    }
-    (*amount)++;
-
-    ListNode *node = graph->adjacencyLists[valueIndex]->head->next;
-    if (node == NULL) {
-        (*componentsAmount) += *amount - 1;
-        return;
-    }
-    if (visitedNodes[valueIndex] == 1) {
-        if (valueIndex != 0) {
-            (*componentsAmount)--;
+int checkAllVisited(const int visitedNodes[], size_t size) {
+    for (size_t i = 0; i < size; i++) {
+        if (visitedNodes[i] == 0) {
+            return 0;
         }
-        return;
     }
-
-    visitedNodes[valueIndex] = 1;
-
-    if (valueIndex != 0) {
-        (*componentsAmount)--;
-    }
-    printf("Visited: %i\n", value);
-    while (node != NULL) {
-        size_t valueIndex1 = indexOfNode(graph, node->data);
-        if (visitedNodes[valueIndex1] == 0) {
-            DFSSecond(graph, amount, componentsAmount, node->data, visitedNodes);
-        }
-        node = node->next;
-    }
+    return 1;
 }
 
 int isGraphConnected(Graph *graph) {
@@ -104,18 +74,14 @@ int isGraphConnected(Graph *graph) {
     for (size_t i = 0; i < graph->size; i++) {
         visitedNodes[i] = 0;
     }
-    int componentsAmount = graph->size;
-
-    DFS(graph, &componentsAmount, graph->adjacencyLists[0]->head->data, visitedNodes);
-    if (componentsAmount == 1) {
+    DFS(graph, 0, visitedNodes, 0);
+    if (checkAllVisited(visitedNodes, graph->size) == 1) {
         return 1;
     }
-    int a = 0;
     for (size_t i = 1; i < graph->size; i++) {
-        DFSSecond(graph, &a, &componentsAmount, graph->adjacencyLists[i]->head->data, visitedNodes);
-        a = 0;
+        DFS(graph, i, visitedNodes, 1);
     }
-    if (componentsAmount == 1) {
+    if (checkAllVisited(visitedNodes, graph->size) == 1) {
         return 1;
     }
     return 0;
