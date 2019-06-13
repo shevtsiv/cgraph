@@ -67,6 +67,53 @@ TEST(GraphTest, CreateGraphTest) {
     freeGraph(graph);
 }
 
+TEST(GraphTest, CheckGraphConnectivityTest) {
+    Graph *connected = createGraph(5);
+    addNode(connected, 1);
+    addNode(connected, 5);
+    addNode(connected, 10);
+    addNode(connected, 11);
+    addNode(connected, 6);
+    addLine(connected, 1, 5);
+    addLine(connected, 1, 6);
+    addLine(connected, 1, 10);
+    addLine(connected, 5, 10);
+    addLine(connected, 5, 11);
+    addLine(connected, 6, 5);
+    ASSERT_TRUE(isGraphConnected(connected) == 1);
+
+    Graph *anotherConnected = createGraph(4);
+    addNode(anotherConnected, 1);
+    addNode(anotherConnected, 5);
+    addNode(anotherConnected, 6);
+    addNode(anotherConnected, 11);
+    addLine(anotherConnected, 1, 5);
+    addLine(anotherConnected, 6, 5);
+    addLine(anotherConnected, 11, 5);
+    ASSERT_TRUE(isGraphConnected(anotherConnected) == 1);
+
+    Graph *notConnected = createGraph(8);
+    addNode(notConnected, 1);
+    addNode(notConnected, 5);
+    addNode(notConnected, 4);
+    addNode(notConnected, 3);
+    addNode(notConnected, 2);
+    addNode(notConnected, 6);
+    addNode(notConnected, 9);
+    addNode(notConnected, 10);
+    addLine(notConnected, 1, 5);
+    addLine(notConnected, 2, 5);
+    addLine(notConnected, 4, 5);
+    addLine(notConnected, 3, 5);
+    addLine(notConnected, 6, 3);
+    addLine(notConnected, 9, 10);
+    ASSERT_TRUE(isGraphConnected(notConnected) == 0);
+
+    freeGraph(connected);
+    freeGraph(anotherConnected);
+    freeGraph(notConnected);
+}
+
 int main(int argc, char **argv) {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

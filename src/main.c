@@ -18,12 +18,7 @@ int main() {
 
     addLine(graph, 6, 5);
 
-    addNode(graph, 9);
-    addLine(graph, 1, 9);
-    
-    addNode(graph, 54);
-    addLine(graph, 9, 54);
-
+    printf("Is connected: %i\n", isGraphConnected(graph));
     printGraph(graph);
     freeGraph(graph);
     return 0;
