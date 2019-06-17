@@ -139,6 +139,28 @@ TEST(GraphTest, CheckGraphCyclesTest) {
     freeGraph(cyclic);
 }
 
+TEST(GraphTest, GetLongestCycleOnSelfTest) {
+    Graph *cyclic = createGraph(1);
+    addNode(cyclic, 1);
+    addLine(cyclic, 1, 1);
+    List *longestCycle = getLongestCycle(cyclic);
+    int cycleInArray[2];
+    toArray(longestCycle, cycleInArray);
+    ASSERT_THAT(cycleInArray, testing::ElementsAre(1, 1));
+    freeList(longestCycle);
+    freeGraph(cyclic);
+}
+
+TEST(GraphTest, NoCycleTest) {
+    Graph *cyclic = createGraph(2);
+    addNode(cyclic, 1);
+    addNode(cyclic, 2);
+    addLine(cyclic, 1, 2);
+    List *longestCycle = getLongestCycle(cyclic);
+    ASSERT_TRUE(longestCycle == nullptr);
+    freeGraph(cyclic);
+}
+
 int main(int argc, char **argv) {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
