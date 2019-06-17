@@ -27,14 +27,6 @@ void addNode(Graph *graph, int data) {
     addToList(graph->adjacencyLists[graph->size++], data);
 }
 
-void addLine(Graph *graph, int sourceValue, int destinationValue) {
-    size_t sourceIndex = indexOf(graph->adjacencyLists, graph->size, sourceValue);
-    if (sourceIndex == -1 || indexOf(graph->adjacencyLists, graph->size, destinationValue) == -1) {
-        return;
-    }
-    addToList(graph->adjacencyLists[sourceIndex], destinationValue);
-}
-
 size_t indexOfNode(Graph *graph, int nodeValue) {
     for (size_t i = 0; i < graph->size; i++) {
         if (graph->adjacencyLists[i]->head->data == nodeValue) {
@@ -42,6 +34,15 @@ size_t indexOfNode(Graph *graph, int nodeValue) {
         }
     }
     return -1;
+}
+
+void addLine(Graph *graph, int sourceValue, int destinationValue) {
+    size_t sourceIndex = indexOf(graph->adjacencyLists, graph->size, sourceValue);
+    graph->adjacencyLists[sourceIndex]->head->edgesCount++;
+    if (sourceIndex == -1 || indexOf(graph->adjacencyLists, graph->size, destinationValue) == -1) {
+        return;
+    }
+    addToList(graph->adjacencyLists[sourceIndex], destinationValue);
 }
 
 void DFS(Graph *graph, int valueIndex, int visitedNodes[], int mode) {
@@ -58,6 +59,70 @@ void DFS(Graph *graph, int valueIndex, int visitedNodes[], int mode) {
         }
         nextNode = nextNode->next;
     }
+}
+
+// TODO: FIXME
+// This func actually doesn't return all cycles since we have to rollback more nodes after reaching the end.
+int getAllCycles(Graph *graph, int valueIndex, List visitedNodes[], int visited[], int startNodeData, List *cycles[], size_t *cyclesAmount) {
+    ListNode *node = graph->adjacencyLists[valueIndex]->head;
+    if (visited[indexOfNode(graph, node->data)] == 1) {
+        if (node->data == startNodeData) {
+            addToList(visitedNodes, node->data);
+            printList(visitedNodes);
+            cycles[*cyclesAmount] = createList();
+            ListNode *cycleNode = visitedNodes->head;
+            while (cycleNode != NULL) {
+                addToList(cycles[*cyclesAmount], cycleNode->data);
+                cycleNode = cycleNode->next;
+            }
+            (*cyclesAmount)++;
+            // TODO: Remove this print, it is for debug purpose only
+            printf("\n");
+            return 1;
+        }
+        if (node->edgesCount == 1) {
+            return -1;
+        }
+    }
+    visited[indexOfNode(graph, node->data)] = 1;
+    addToList(visitedNodes, node->data);
+    ListNode *nextNode = node->next;
+    while (nextNode != NULL) {
+        size_t nextNodeIndex = indexOfNode(graph, nextNode->data);
+        int i = getAllCycles(graph, nextNodeIndex, visitedNodes, visited, startNodeData, cycles, cyclesAmount);
+        if (i == 1) {
+            popFromList(visitedNodes);
+        }
+        nextNode = nextNode->next;
+    }
+    popFromList(visitedNodes);
+}
+
+List* getLongestCycle(Graph *graph) {
+    List *cycles[100];
+    size_t cyclesAmount = 0;
+    for (size_t i = 0; i < graph->size; i++) {
+        int visited[graph->size];
+        for (size_t j = 0; j < graph->size; j++) {
+            visited[j] = 0;
+        }
+        List *list = createList();
+
+        getAllCycles(graph, i, list, visited, graph->adjacencyLists[i]->head->data, cycles, &cyclesAmount);
+        freeList(list);
+    }
+    if (cyclesAmount == 0) {
+        return NULL;
+    }
+    size_t maxCycleIndex = 0;
+    for (size_t i = 1; i < cyclesAmount; i++) {
+        if (cycles[i]->size > cycles[maxCycleIndex]->size) {
+            maxCycleIndex = i;
+        } else {
+            freeList(cycles[i]);
+        }
+    }
+    return cycles[maxCycleIndex];
 }
 
 int checkAllVisited(const int visitedNodes[], size_t size) {

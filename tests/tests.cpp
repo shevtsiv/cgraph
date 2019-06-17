@@ -114,6 +114,31 @@ TEST(GraphTest, CheckGraphConnectivityTest) {
     freeGraph(notConnected);
 }
 
+TEST(GraphTest, CheckGraphCyclesTest) {
+    Graph *cyclic = createGraph(6);
+    addNode(cyclic, 1);
+    addNode(cyclic, 2);
+    addNode(cyclic, 3);
+    addNode(cyclic, 4);
+    addNode(cyclic, 5);
+    addNode(cyclic, 6);
+    addLine(cyclic, 1, 2);
+    addLine(cyclic, 2, 3);
+    addLine(cyclic, 3, 4);
+    addLine(cyclic, 4, 3);
+    addLine(cyclic, 3, 5);
+    addLine(cyclic, 5, 2);
+    addLine(cyclic, 2, 6);
+    addLine(cyclic, 6, 1);
+
+    List *longestCycle = getLongestCycle(cyclic);
+    int cycleInArray[9];
+    toArray(longestCycle, cycleInArray);
+    ASSERT_THAT(cycleInArray, testing::ElementsAre(1, 2, 3, 4, 3, 5, 2, 6, 1));
+    freeList(longestCycle);
+    freeGraph(cyclic);
+}
+
 int main(int argc, char **argv) {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

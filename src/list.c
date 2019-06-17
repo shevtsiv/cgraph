@@ -1,6 +1,7 @@
 typedef struct ListNode {
     int data;
     struct ListNode *next;
+    int edgesCount;
 } ListNode;
 
 typedef struct {
@@ -49,6 +50,15 @@ int popFromList(List *list) {
     preTail->next = NULL;
     list->size--;
     return data;
+}
+
+void toArray(List *list, int array[]) {
+    ListNode *node = list->head;
+    size_t index = 0;
+    while (node != NULL) {
+        array[index++] = node->data;
+        node = node->next;
+    }
 }
 
 void printList(List *list) {
