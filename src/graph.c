@@ -96,6 +96,7 @@ int getAllCycles(Graph *graph, int valueIndex, List visitedNodes[], int visited[
         nextNode = nextNode->next;
     }
     popFromList(visitedNodes);
+    return -1;
 }
 
 List* getLongestCycle(Graph *graph) {
