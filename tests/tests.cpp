@@ -2,6 +2,15 @@
 #include <gmock/gmock.h>
 #include "../src/graph.c"
 
+bool arraysCompare(const int firstArray[], const int secondArray[], size_t len) {
+    for (size_t i = 0; i < len; i++) {
+        if (firstArray[i] != secondArray[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
 // List tests =========================
 
 TEST(ListTest, CreateListTest) {
@@ -158,6 +167,53 @@ TEST(GraphTest, NoCycleTest) {
     addLine(cyclic, 1, 2);
     List *longestCycle = getLongestCycle(cyclic);
     ASSERT_TRUE(longestCycle == nullptr);
+    freeGraph(cyclic);
+}
+
+TEST(GraphTest, LongCycleGraphTest) {
+    Graph *cyclic = createGraph(6);
+    addNode(cyclic, 1);
+    addNode(cyclic, 2);
+    addNode(cyclic, 3);
+    addNode(cyclic, 4);
+    addNode(cyclic, 5);
+    addNode(cyclic, 6);
+    addNode(cyclic, 7);
+    addNode(cyclic, 8);
+    addNode(cyclic, 9);
+    addNode(cyclic, 10);
+    addNode(cyclic, 11);
+    addNode(cyclic, 12);
+    addNode(cyclic, 13);
+    addNode(cyclic, 14);
+    addNode(cyclic, 15);
+    addNode(cyclic, 16);
+
+    addLine(cyclic, 1, 2);
+    addLine(cyclic, 2, 3);
+    addLine(cyclic, 3, 4);
+    addLine(cyclic, 4, 5);
+    addLine(cyclic, 5, 6);
+    addLine(cyclic, 5, 7);
+    addLine(cyclic, 6, 7);
+    addLine(cyclic, 7, 8);
+    addLine(cyclic, 8, 9);
+    addLine(cyclic, 9, 10);
+    addLine(cyclic, 10, 11);
+    addLine(cyclic, 11, 12);
+    addLine(cyclic, 12, 13);
+    addLine(cyclic, 13, 4);
+    addLine(cyclic, 4, 14);
+    addLine(cyclic, 14, 15);
+    addLine(cyclic, 15, 16);
+    addLine(cyclic, 16, 1);
+
+    List *longestCycle = getLongestCycle(cyclic);
+    int cycleInArray[18];
+    toArray(longestCycle, cycleInArray);
+    int expectedCycle[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 4, 14, 15, 16, 1};
+    ASSERT_TRUE(arraysCompare(cycleInArray, expectedCycle, 18));
+    freeList(longestCycle);
     freeGraph(cyclic);
 }
 
