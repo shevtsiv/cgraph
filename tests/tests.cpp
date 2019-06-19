@@ -1,15 +1,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include "../src/graph.c"
-
-bool arraysCompare(const int firstArray[], const int secondArray[], size_t len) {
-    for (size_t i = 0; i < len; i++) {
-        if (firstArray[i] != secondArray[i]) {
-            return false;
-        }
-    }
-    return true;
-}
+#include "test_utils.cpp"
 
 // List tests =========================
 
