@@ -3,60 +3,34 @@
 
 typedef struct {
     size_t size;
-    size_t capacity;
     List **adjacencyLists;
 } Graph;
 
-Graph *createGraph(size_t capacity) {
-    Graph *graph = (Graph *) calloc(1, sizeof(Graph));
-    graph->capacity = capacity;
-    graph->adjacencyLists = (List **) malloc(sizeof(List *) * capacity);
+Graph *createGraph(size_t nodesAmount) {
+    Graph *graph = (Graph *) malloc(sizeof(Graph));
+    graph->size = nodesAmount;
+    graph->adjacencyLists = (List **) malloc(sizeof(List *) * nodesAmount);
+    for (size_t i = 0; i < nodesAmount; i++) {
+        graph->adjacencyLists[i] = createList();
+        addToList(graph->adjacencyLists[i], i);
+    }
     return graph;
 }
 
-void addNode(Graph *graph, int data) {
-    graph->adjacencyLists[graph->size] = createList();
-    if ((graph->size + 1) == graph->capacity) {
-        List **newAdjacencyList = (List **) malloc(sizeof(List *) * graph->capacity * 2);
-        for (size_t i = 0; i < graph->capacity; i++) {
-            newAdjacencyList[i] = graph->adjacencyLists[i];
-        }
-        free(graph->adjacencyLists);
-        graph->adjacencyLists = newAdjacencyList;
-        graph->capacity = graph->capacity * 2;
-    }
-    addToList(graph->adjacencyLists[graph->size++], data);
-}
-
-size_t indexOfNode(Graph *graph, int nodeValue) {
-    for (size_t i = 0; i < graph->size; i++) {
-        if (graph->adjacencyLists[i]->head->data == nodeValue) {
-            return i;
-        }
-    }
-    return -1;
-}
-
-void addLine(Graph *graph, int sourceValue, int destinationValue) {
-    size_t sourceIndex = indexOf(graph->adjacencyLists, graph->size, sourceValue);
+void addLine(Graph *graph, int sourceIndex, int destinationIndex) {
     graph->adjacencyLists[sourceIndex]->head->edgesCount++;
-    if (sourceIndex == -1 || indexOf(graph->adjacencyLists, graph->size, destinationValue) == -1) {
-        return;
-    }
-    addToList(graph->adjacencyLists[sourceIndex], destinationValue);
+    addToList(graph->adjacencyLists[sourceIndex], destinationIndex);
 }
 
-void DFS(Graph *graph, int valueIndex, int visitedNodes[], int mode) {
-    ListNode *nextNode = graph->adjacencyLists[valueIndex]->head->next;
+void DFS(Graph *graph, int startIndex, int visitedNodes[], int mode) {
+    ListNode *nextNode = graph->adjacencyLists[startIndex]->head->next;
     if (mode == 1 && nextNode == NULL) {
         return;
     }
-    visitedNodes[valueIndex] = 1;
+    visitedNodes[startIndex] = 1;
     while (nextNode != NULL) {
-        // TODO: If we can rely on valueIndex + 1 to get next node, we don't have to do indexOf here
-        size_t nextNodeIndex = indexOfNode(graph, nextNode->data);
-        if (visitedNodes[nextNodeIndex] == 0) {
-            DFS(graph, nextNodeIndex, visitedNodes, mode);
+        if (visitedNodes[nextNode->data] == 0) {
+            DFS(graph, nextNode->data, visitedNodes, mode);
         }
         nextNode = nextNode->next;
     }
@@ -64,9 +38,9 @@ void DFS(Graph *graph, int valueIndex, int visitedNodes[], int mode) {
 
 // TODO: FIXME
 // This func actually doesn't return all cycles since we have to rollback more nodes after reaching the end.
-int getAllCycles(Graph *graph, int valueIndex, List visitedNodes[], int visited[], int startNodeData, List *cycles[], size_t *cyclesAmount) {
-    ListNode *node = graph->adjacencyLists[valueIndex]->head;
-    if (visited[indexOfNode(graph, node->data)] == 1) {
+int getAllCycles(Graph *graph, int startIndex, List visitedNodes[], int visited[], int startNodeData, List *cycles[], size_t *cyclesAmount) {
+    ListNode *node = graph->adjacencyLists[startIndex]->head;
+    if (visited[startIndex] == 1) {
         if (node->data == startNodeData) {
             addToList(visitedNodes, node->data);
             printList(visitedNodes);
@@ -85,12 +59,15 @@ int getAllCycles(Graph *graph, int valueIndex, List visitedNodes[], int visited[
             return -1;
         }
     }
-    visited[indexOfNode(graph, node->data)] = 1;
+    visited[startIndex] = 1;
     addToList(visitedNodes, node->data);
     ListNode *nextNode = node->next;
+    if (nextNode == NULL || ((startIndex + 1) == graph->size && nextNode->data != startNodeData)) {
+        popFromList(visitedNodes);
+        return -1;
+    }
     while (nextNode != NULL) {
-        size_t nextNodeIndex = indexOfNode(graph, nextNode->data);
-        int i = getAllCycles(graph, nextNodeIndex, visitedNodes, visited, startNodeData, cycles, cyclesAmount);
+        int i = getAllCycles(graph, nextNode->data, visitedNodes, visited, startNodeData, cycles, cyclesAmount);
         if (i == 1) {
             popFromList(visitedNodes);
         }
