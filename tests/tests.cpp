@@ -58,6 +58,23 @@ TEST(ListTest, PopFromList) {
     free(list);
 }
 
+TEST(ListTest, MakeListCopyTest) {
+    List *list = createList();
+    addToList(list, 1);
+    addToList(list, 2);
+    addToList(list, 5);
+    List *copy = makeCopy(list);
+    addToList(list, 10);
+    addToList(list, 20);
+    addToList(list, 30);
+    ASSERT_TRUE(popFromList(copy) == 5);
+    ASSERT_TRUE(popFromList(copy) == 2);
+    ASSERT_TRUE(popFromList(copy) == 1);
+    ASSERT_TRUE(popFromList(copy) == -999);
+    freeList(copy);
+    freeList(list);
+}
+
 // Graph tests ========================
 
 TEST(GraphTest, CreateGraphTest) {

@@ -52,6 +52,16 @@ int popFromList(List *list) {
     return data;
 }
 
+List *makeCopy(List *first) {
+    List *list = createList();
+    ListNode *node = first->head;
+    while (node != NULL) {
+        addToList(list, node->data);
+        node = node->next;
+    }
+    return list;
+}
+
 void toArray(List *list, int array[]) {
     ListNode *node = list->head;
     size_t index = 0;

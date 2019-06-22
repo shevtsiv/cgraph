@@ -45,13 +45,7 @@ int getAllCycles(Graph *graph, int startIndex, List visitedNodes[], int visited[
         if (node->data == startNodeData) {
             addToList(visitedNodes, node->data);
             printList(visitedNodes);
-            cycles[*cyclesAmount] = createList();
-            ListNode *cycleNode = visitedNodes->head;
-            while (cycleNode != NULL) {
-                addToList(cycles[*cyclesAmount], cycleNode->data);
-                cycleNode = cycleNode->next;
-            }
-            (*cyclesAmount)++;
+            cycles[(*cyclesAmount)++] = makeCopy(visitedNodes);
             // TODO: Remove this print, it is for debug purpose only
             printf("\n");
             return 1;
