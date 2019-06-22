@@ -22,16 +22,17 @@ void addLine(Graph *graph, int sourceIndex, int destinationIndex) {
     addToList(graph->adjacencyLists[sourceIndex], destinationIndex);
 }
 
-void DFS(Graph *graph, int startIndex, int visitedNodes[], int mode) {
+void tryToVisitAllNodes(Graph *graph, int startIndex, int *visitedNodes, size_t iteration) {
+    if (visitedNodes[startIndex] == 1) {
+        return;
+    }
     ListNode *nextNode = graph->adjacencyLists[startIndex]->head->next;
-    if (mode == 1 && nextNode == NULL) {
+    if (nextNode == NULL && iteration != 0) { // It is OK if we cannot access some node on the first iteration
         return;
     }
     visitedNodes[startIndex] = 1;
     while (nextNode != NULL) {
-        if (visitedNodes[nextNode->data] == 0) {
-            DFS(graph, nextNode->data, visitedNodes, mode);
-        }
+        tryToVisitAllNodes(graph, nextNode->data, visitedNodes, iteration);
         nextNode = nextNode->next;
     }
 }
@@ -109,17 +110,10 @@ int isGraphConnected(Graph *graph) {
     for (size_t i = 0; i < graph->size; i++) {
         visitedNodes[i] = 0;
     }
-    DFS(graph, 0, visitedNodes, 0);
-    if (checkAllVisited(visitedNodes, graph->size) == 1) {
-        return 1;
+    for (size_t i = 0; i < graph->size; i++) {
+        tryToVisitAllNodes(graph, i, visitedNodes, i);
     }
-    for (size_t i = 1; i < graph->size; i++) {
-        DFS(graph, i, visitedNodes, 1);
-    }
-    if (checkAllVisited(visitedNodes, graph->size) == 1) {
-        return 1;
-    }
-    return 0;
+    return checkAllVisited(visitedNodes, graph->size);
 }
 
 void printGraph(Graph *graph) {
