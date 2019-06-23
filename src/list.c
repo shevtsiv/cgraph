@@ -1,7 +1,7 @@
 typedef struct ListNode {
-    int data;
+    size_t data;
     struct ListNode *next;
-    int edgesCount;
+    size_t edgesCount;
 } ListNode;
 
 typedef struct {
@@ -14,7 +14,7 @@ List *createList() {
     return list;
 }
 
-void addToList(List *list, int data) {
+void addToList(List *list, size_t data) {
     ListNode *node = (ListNode *) calloc(1, sizeof(ListNode));
     node->data = data;
     if (list->head == NULL) {
@@ -30,12 +30,12 @@ void addToList(List *list, int data) {
     list->size++;
 }
 
-int popFromList(List *list) {
+size_t popFromList(List *list) {
     if (list->head == NULL) {
         return -999;
     }
     if (list->head->next == NULL) {
-        int data = list->head->data;
+        size_t data = list->head->data;
         free(list->head);
         list->head = NULL;
         list->size = 0;
@@ -45,7 +45,7 @@ int popFromList(List *list) {
     while (preTail->next->next != NULL) {
         preTail = preTail->next;
     }
-    int data = preTail->next->data;
+    size_t data = preTail->next->data;
     free(preTail->next);
     preTail->next = NULL;
     list->size--;
@@ -62,7 +62,7 @@ List *makeCopy(List *first) {
     return list;
 }
 
-void toArray(List *list, int array[]) {
+void toArray(List *list, size_t array[]) {
     ListNode *node = list->head;
     size_t index = 0;
     while (node != NULL) {
@@ -74,7 +74,7 @@ void toArray(List *list, int array[]) {
 void printList(List *list) {
     ListNode *node = list->head;
     while (node != NULL) {
-        printf("%i ", node->data);
+        printf("%lu ", node->data);
         node = node->next;
     }
 }

@@ -134,7 +134,7 @@ TEST(GraphTest, CheckGraphCyclesTest) {
     addLine(cyclic, 6, 0);
 
     List *longestCycle = getLongestGraphCycle(cyclic);
-    int cycleInArray[10];
+    size_t cycleInArray[10];
     toArray(longestCycle, cycleInArray);
     ASSERT_THAT(cycleInArray, testing::ElementsAre(0, 1, 2, 3, 4, 3, 5, 1, 6, 0));
     freeList(longestCycle);
@@ -154,7 +154,7 @@ TEST(GraphTest, LongestCycleNotFromFirstNodeTest) {
     addLine(cyclic, 0, 7);
     addLine(cyclic, 7, 0);
     List *longestCycle = getLongestGraphCycle(cyclic);
-    int cycleInArray[8];
+    size_t cycleInArray[8];
     toArray(longestCycle, cycleInArray);
     ASSERT_THAT(cycleInArray, testing::ElementsAre(1, 2, 3, 4, 3, 5, 6, 1));
     freeList(longestCycle);
@@ -165,7 +165,7 @@ TEST(GraphTest, GetLongestCycleOnSelfTest) {
     Graph *cyclic = createGraph(1);
     addLine(cyclic, 0, 0);
     List *longestCycle = getLongestGraphCycle(cyclic);
-    int cycleInArray[2];
+    size_t cycleInArray[2];
     toArray(longestCycle, cycleInArray);
     ASSERT_THAT(cycleInArray, testing::ElementsAre(0, 0));
     freeList(longestCycle);
@@ -203,9 +203,9 @@ TEST(GraphTest, LongCycleGraphTest) {
     addLine(cyclic, 16, 0);
 
     List *longestCycle = getLongestGraphCycle(cyclic);
-    int cycleInArray[18];
+    size_t cycleInArray[18];
     toArray(longestCycle, cycleInArray);
-    int expectedCycle[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 4, 14, 15, 16, 0};
+    size_t expectedCycle[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 4, 14, 15, 16, 0};
     ASSERT_TRUE(arraysCompare(cycleInArray, expectedCycle, 18));
     freeList(longestCycle);
     freeGraph(cyclic);
