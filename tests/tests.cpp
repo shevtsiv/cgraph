@@ -233,6 +233,24 @@ TEST(GraphTest, AddLineToNonExistentNodeTest) {
     freeGraph(graph);
 }
 
+TEST(GraphTest, TwoEqualCyclesTest) {
+    Graph *graph = createGraph(5);
+    addLine(graph, 0, 1);
+    addLine(graph, 1, 2);
+    addLine(graph, 2, 0);
+
+    addLine(graph, 0, 3);
+    addLine(graph, 3, 4);
+    addLine(graph, 4, 0);
+
+    List *longestCycle = getLongestGraphCycle(graph);
+    size_t cycleInArray[7];
+    toArray(longestCycle, cycleInArray);
+    ASSERT_THAT(cycleInArray, testing::ElementsAre(3, 4, 0, 1, 2, 0, 3));
+    freeList(longestCycle);
+    freeGraph(graph);
+}
+
 TEST(GraphTest, DFSStartingFromNonExistentNodeTest) {
     Graph *graph = createGraph(3);
     size_t visitedNodes[graph->size];
