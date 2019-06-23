@@ -37,40 +37,29 @@ void tryToVisitAllNodes(Graph *graph, int startIndex, int *visitedNodes, size_t 
     }
 }
 
-// TODO: FIXME
-// This func actually doesn't return all cycles since we have to rollback more nodes after reaching the end.
-int getAllCycles(Graph *graph, int startIndex, int visited[], int startNodeData, List *cycles[], size_t *cyclesAmount) {
-    ListNode *node = graph->adjacencyLists[startIndex]->head;
-    if (visited[startIndex] == 1) {
+void getAllCycles(Graph *graph, int currentIndex, int visited[], int startNodeData, List *cycles[], size_t *cyclesAmount) {
+    if (currentIndex == graph->size) {
+        return;
+    }
+    ListNode *node = graph->adjacencyLists[currentIndex]->head;
+    if (visited[currentIndex]) {
         if (node->data == startNodeData) {
-            addToList(cycles[*cyclesAmount], node->data);
-            printList(cycles[*cyclesAmount]);
-            (*cyclesAmount)++;
+            addToList(cycles[(*cyclesAmount)++], node->data);
             cycles[*cyclesAmount] = createList();
-            // TODO: Remove this print, it is for debug purpose only
-            printf("\n");
-            return 1;
+            return;
         }
         if (node->edgesCount == 1) {
-            return -1;
+            return;
         }
     }
-    visited[startIndex] = 1;
+    visited[currentIndex] = 1;
     addToList(cycles[*cyclesAmount], node->data);
     ListNode *nextNode = node->next;
-    if (nextNode == NULL || ((startIndex + 1) == graph->size && nextNode->data != startNodeData)) {
-        popFromList(cycles[*cyclesAmount]);
-        return -1;
-    }
     while (nextNode != NULL) {
-        int i = getAllCycles(graph, nextNode->data, visited, startNodeData, cycles, cyclesAmount);
-        if (i == 1) {
-            popFromList(cycles[*cyclesAmount]);
-        }
+        getAllCycles(graph, nextNode->data, visited, startNodeData, cycles, cyclesAmount);
         nextNode = nextNode->next;
     }
     popFromList(cycles[*cyclesAmount]);
-    return -1;
 }
 
 List* getLongestCycle(Graph *graph) {
