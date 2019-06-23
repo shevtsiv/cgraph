@@ -15,7 +15,13 @@ List *createList() {
 }
 
 void addToList(List *list, size_t data) {
+    if (list == NULL) {
+        return;
+    }
     ListNode *node = (ListNode *) calloc(1, sizeof(ListNode));
+    if (node == NULL) {
+        return;
+    }
     node->data = data;
     if (list->head == NULL) {
         list->head = node;
@@ -31,7 +37,7 @@ void addToList(List *list, size_t data) {
 }
 
 size_t popFromList(List *list) {
-    if (list->head == NULL) {
+    if (list == NULL || list->head == NULL) {
         return -999;
     }
     if (list->head->next == NULL) {
@@ -53,7 +59,13 @@ size_t popFromList(List *list) {
 }
 
 List *makeCopy(List *first) {
+    if (first == NULL) {
+        return NULL;
+    }
     List *list = createList();
+    if (list == NULL) {
+        return NULL;
+    }
     ListNode *node = first->head;
     while (node != NULL) {
         addToList(list, node->data);
@@ -63,6 +75,9 @@ List *makeCopy(List *first) {
 }
 
 void toArray(List *list, size_t array[]) {
+    if (list == NULL) {
+        return;
+    }
     ListNode *node = list->head;
     size_t index = 0;
     while (node != NULL) {
@@ -72,6 +87,9 @@ void toArray(List *list, size_t array[]) {
 }
 
 void printList(List *list) {
+    if (list == NULL) {
+        return;
+    }
     ListNode *node = list->head;
     while (node != NULL) {
         printf("%lu ", node->data);

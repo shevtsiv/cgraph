@@ -8,22 +8,38 @@ typedef struct {
 
 Graph *createGraph(size_t nodesAmount) {
     Graph *graph = (Graph *) malloc(sizeof(Graph));
+    if (graph == NULL) {
+        return NULL;
+    }
     graph->size = nodesAmount;
     graph->adjacencyLists = (List **) malloc(sizeof(List *) * nodesAmount);
+    if (graph->adjacencyLists == NULL) {
+        free(graph);
+        return NULL;
+    }
     for (size_t i = 0; i < nodesAmount; i++) {
-        graph->adjacencyLists[i] = createList();
+        List *list = createList();
+        if (list == NULL) {
+            free(graph->adjacencyLists);
+            free(graph);
+            return NULL;
+        }
+        graph->adjacencyLists[i] = list;
         addToList(graph->adjacencyLists[i], i);
     }
     return graph;
 }
 
 void addLine(Graph *graph, size_t sourceIndex, size_t destinationIndex) {
+    if (graph == NULL || sourceIndex >= graph->size || destinationIndex >= graph->size) {
+        return;
+    }
     graph->adjacencyLists[sourceIndex]->head->edgesCount++;
     addToList(graph->adjacencyLists[sourceIndex], destinationIndex);
 }
 
 void tryToVisitAllNodes(Graph *graph, size_t startIndex, size_t *visitedNodes, size_t iteration) {
-    if (visitedNodes[startIndex] == 1) {
+    if (graph == NULL || startIndex >= graph->size || visitedNodes[startIndex] == 1) {
         return;
     }
     ListNode *nextNode = graph->adjacencyLists[startIndex]->head->next;
@@ -39,7 +55,7 @@ void tryToVisitAllNodes(Graph *graph, size_t startIndex, size_t *visitedNodes, s
 
 void getLongestCycle(Graph *graph, size_t currentIndex, size_t *visited, size_t startNodeData, List **longestCycle,
                      size_t *cyclesAmount) {
-    if (currentIndex == graph->size) {
+    if (graph == NULL || currentIndex >= graph->size) {
         return;
     }
     ListNode *node = graph->adjacencyLists[currentIndex]->head;
@@ -75,6 +91,9 @@ void getLongestCycle(Graph *graph, size_t currentIndex, size_t *visited, size_t 
 }
 
 List *getLongestGraphCycle(Graph *graph) {
+    if (graph == NULL) {
+        return NULL;
+    }
     List *cycles[2] = {createList(), createList()};
     size_t cyclesAmount = 0;
     for (size_t i = 0; i < graph->size; i++) {
@@ -91,6 +110,9 @@ List *getLongestGraphCycle(Graph *graph) {
 }
 
 size_t isGraphConnected(Graph *graph) {
+    if (graph == NULL) {
+        return 0;
+    }
     size_t visitedNodes[graph->size];
     memset(visitedNodes, 0, sizeof(visitedNodes));
     for (size_t i = 0; i < graph->size; i++) {
@@ -100,6 +122,9 @@ size_t isGraphConnected(Graph *graph) {
 }
 
 void printGraph(Graph *graph) {
+    if (graph == NULL) {
+        return;
+    }
     for (size_t i = 0; i < graph->size; i++) {
         printf("List №%lu:\n", i);
         printList(graph->adjacencyLists[i]);

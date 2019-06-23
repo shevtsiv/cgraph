@@ -75,6 +75,19 @@ TEST(ListTest, MakeListCopyTest) {
     freeList(list);
 }
 
+TEST(ListTest, NullListToArrayTest) {
+    List *list = nullptr;
+    size_t array[10];
+    toArray(list, array);
+    freeList(list);
+}
+
+TEST(ListTest, PrintNullListTest) {
+    List *list = nullptr;
+    printList(list);
+    freeList(list);
+}
+
 TEST(ListTest, FreeNullListTest) {
     List *list = nullptr;
     freeList(list);
@@ -209,6 +222,42 @@ TEST(GraphTest, LongCycleGraphTest) {
     ASSERT_TRUE(arraysCompare(cycleInArray, expectedCycle, 18));
     freeList(longestCycle);
     freeGraph(cyclic);
+}
+
+TEST(GraphTest, AddLineToNonExistentNodeTest) {
+    Graph *graph = createGraph(3);
+    addLine(graph, 3, 5);
+    addLine(graph, 10, 20);
+    addLine(graph, 2, 3);
+    ASSERT_TRUE(graph->adjacencyLists[2]->head->next == nullptr);
+    freeGraph(graph);
+}
+
+TEST(GraphTest, DFSStartingFromNonExistentNodeTest) {
+    Graph *graph = createGraph(3);
+    size_t visitedNodes[graph->size];
+    tryToVisitAllNodes(graph, 5, visitedNodes, 0);
+    freeGraph(graph);
+}
+
+TEST(GraphTest, GetLongestCycleFromNonExistentNodeTest) {
+    Graph *graph = createGraph(3);
+    List *cycles[2] = {createList(), createList()};
+    size_t cyclesAmount = 0;
+    for (size_t i = 0; i < graph->size + 5; i++) { // loop with overflow
+        size_t visited[graph->size];
+        memset(visited, 0, sizeof(visited));
+        getLongestCycle(graph, i, visited, i, cycles, &cyclesAmount);
+    }
+    freeList(cycles[0]);
+    freeList(cycles[1]);
+    freeGraph(graph);
+}
+
+TEST(GraphTest, PrintNullGraphTest) {
+    Graph *graph = nullptr;
+    printGraph(graph);
+    freeGraph(graph);
 }
 
 TEST(GraphTest, FreeNullGraphTest) {
