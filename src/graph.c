@@ -37,15 +37,27 @@ void tryToVisitAllNodes(Graph *graph, int startIndex, int *visitedNodes, size_t 
     }
 }
 
-void getAllCycles(Graph *graph, int currentIndex, int visited[], int startNodeData, List *cycles[], size_t *cyclesAmount) {
+void getLongestCycle(Graph *graph, int currentIndex, int *visited, int startNodeData, List **longestCycle,
+                     size_t *cyclesAmount) {
     if (currentIndex == graph->size) {
         return;
     }
     ListNode *node = graph->adjacencyLists[currentIndex]->head;
     if (visited[currentIndex]) {
         if (node->data == startNodeData) {
-            addToList(cycles[(*cyclesAmount)++], node->data);
-            cycles[*cyclesAmount] = createList();
+            addToList(longestCycle[*cyclesAmount], node->data);
+            if (*cyclesAmount == 1) {
+                if (longestCycle[1]->size > longestCycle[0]->size) {
+                    freeList(longestCycle[0]);
+                    longestCycle[0] = longestCycle[1];
+                    longestCycle[1] = createList();
+                } else {
+                    freeList(longestCycle[1]);
+                    longestCycle[1] = createList();
+                }
+                return;
+            }
+            ++(*cyclesAmount);
             return;
         }
         if (node->edgesCount == 1) {
@@ -53,40 +65,29 @@ void getAllCycles(Graph *graph, int currentIndex, int visited[], int startNodeDa
         }
     }
     visited[currentIndex] = 1;
-    addToList(cycles[*cyclesAmount], node->data);
+    addToList(longestCycle[*cyclesAmount], node->data);
     ListNode *nextNode = node->next;
     while (nextNode != NULL) {
-        getAllCycles(graph, nextNode->data, visited, startNodeData, cycles, cyclesAmount);
+        getLongestCycle(graph, nextNode->data, visited, startNodeData, longestCycle, cyclesAmount);
         nextNode = nextNode->next;
     }
-    popFromList(cycles[*cyclesAmount]);
+    popFromList(longestCycle[*cyclesAmount]);
 }
 
-List* getLongestCycle(Graph *graph) {
-    List *cycles[100];
-    cycles[0] = createList();
+List* getLongestGraphCycle(Graph *graph) {
+    List *cycles[2] = { createList(), createList() };
     size_t cyclesAmount = 0;
     for (size_t i = 0; i < graph->size; i++) {
         int visited[graph->size];
-        for (size_t j = 0; j < graph->size; j++) {
-            visited[j] = 0;
-        }
-        getAllCycles(graph, i, visited, graph->adjacencyLists[i]->head->data, cycles, &cyclesAmount);
+        memset(visited, 0, sizeof(visited));
+        getLongestCycle(graph, i, visited, i, cycles, &cyclesAmount);
     }
+    freeList(cycles[1]);
     if (cyclesAmount == 0) {
         freeList(cycles[0]);
         return NULL;
     }
-    size_t maxCycleIndex = 0;
-    for (size_t i = 1; i <= cyclesAmount; i++) {
-        if (cycles[i]->size > cycles[maxCycleIndex]->size) {
-            freeList(cycles[maxCycleIndex]);
-            maxCycleIndex = i;
-        } else {
-            freeList(cycles[i]);
-        }
-    }
-    return cycles[maxCycleIndex];
+    return cycles[0];
 }
 
 int isGraphConnected(Graph *graph) {
