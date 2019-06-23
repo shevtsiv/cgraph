@@ -80,6 +80,9 @@ void printList(List *list) {
 }
 
 void freeList(List *list) {
+    if (list == NULL) {
+        return;
+    }
     ListNode *node = list->head;
     while (node != NULL) {
         ListNode *next = node->next;

@@ -108,6 +108,9 @@ void printGraph(Graph *graph) {
 }
 
 void freeGraph(Graph *graph) {
+    if (graph == NULL) {
+        return;
+    }
     for (size_t i = 0; i < graph->size; i++) {
         freeList(graph->adjacencyLists[i]);
     }

@@ -75,6 +75,11 @@ TEST(ListTest, MakeListCopyTest) {
     freeList(list);
 }
 
+TEST(ListTest, FreeNullListTest) {
+    List *list = nullptr;
+    freeList(list);
+}
+
 // Graph tests ========================
 
 TEST(GraphTest, CreateGraphTest) {
@@ -204,6 +209,11 @@ TEST(GraphTest, LongCycleGraphTest) {
     ASSERT_TRUE(arraysCompare(cycleInArray, expectedCycle, 18));
     freeList(longestCycle);
     freeGraph(cyclic);
+}
+
+TEST(GraphTest, FreeNullGraphTest) {
+    Graph *graph = nullptr;
+    freeGraph(graph);
 }
 
 int main(int argc, char **argv) {
