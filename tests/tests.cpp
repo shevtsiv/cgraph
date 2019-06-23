@@ -136,6 +136,26 @@ TEST(GraphTest, CheckGraphCyclesTest) {
     freeGraph(cyclic);
 }
 
+TEST(GraphTest, LongestCycleNotFromFirstNodeTest) {
+    Graph *cyclic = createGraph(8);
+    addLine(cyclic, 1, 0);
+    addLine(cyclic, 1, 2);
+    addLine(cyclic, 2, 3);
+    addLine(cyclic, 3, 4);
+    addLine(cyclic, 4, 3);
+    addLine(cyclic, 3, 5);
+    addLine(cyclic, 5, 6);
+    addLine(cyclic, 6, 1);
+    addLine(cyclic, 0, 7);
+    addLine(cyclic, 7, 0);
+    List *longestCycle = getLongestCycle(cyclic);
+    int cycleInArray[8];
+    toArray(longestCycle, cycleInArray);
+    ASSERT_THAT(cycleInArray, testing::ElementsAre(1, 2, 3, 4, 3, 5, 6, 1));
+    freeList(longestCycle);
+    freeGraph(cyclic);
+}
+
 TEST(GraphTest, GetLongestCycleOnSelfTest) {
     Graph *cyclic = createGraph(1);
     addLine(cyclic, 0, 0);

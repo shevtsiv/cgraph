@@ -80,6 +80,7 @@ List* getLongestCycle(Graph *graph) {
     size_t maxCycleIndex = 0;
     for (size_t i = 1; i <= cyclesAmount; i++) {
         if (cycles[i]->size > cycles[maxCycleIndex]->size) {
+            freeList(cycles[maxCycleIndex]);
             maxCycleIndex = i;
         } else {
             freeList(cycles[i]);
