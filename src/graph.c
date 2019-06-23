@@ -74,8 +74,8 @@ void getLongestCycle(Graph *graph, int currentIndex, int *visited, int startNode
     popFromList(longestCycle[*cyclesAmount]);
 }
 
-List* getLongestGraphCycle(Graph *graph) {
-    List *cycles[2] = { createList(), createList() };
+List *getLongestGraphCycle(Graph *graph) {
+    List *cycles[2] = {createList(), createList()};
     size_t cyclesAmount = 0;
     for (size_t i = 0; i < graph->size; i++) {
         int visited[graph->size];
