@@ -92,9 +92,7 @@ List *getLongestGraphCycle(Graph *graph) {
 
 int isGraphConnected(Graph *graph) {
     int visitedNodes[graph->size];
-    for (size_t i = 0; i < graph->size; i++) {
-        visitedNodes[i] = 0;
-    }
+    memset(visitedNodes, 0, sizeof(visitedNodes));
     for (size_t i = 0; i < graph->size; i++) {
         tryToVisitAllNodes(graph, i, visitedNodes, i);
     }
