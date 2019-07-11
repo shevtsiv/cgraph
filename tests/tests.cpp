@@ -246,7 +246,7 @@ TEST(GraphTest, TwoEqualCyclesTest) {
     List *longestCycle = getLongestGraphCycle(graph);
     size_t cycleInArray[7];
     toArray(longestCycle, cycleInArray);
-    ASSERT_THAT(cycleInArray, testing::ElementsAre(3, 4, 0, 1, 2, 0, 3));
+    ASSERT_THAT(cycleInArray, testing::ElementsAre(1, 2, 0, 3, 4, 0, 1));
     freeList(longestCycle);
     freeGraph(graph);
 }
@@ -260,15 +260,15 @@ TEST(GraphTest, DFSStartingFromNonExistentNodeTest) {
 
 TEST(GraphTest, GetLongestCycleFromNonExistentNodeTest) {
     Graph *graph = createGraph(3);
-    List *cycles[2] = {createList(), createList()};
-    size_t cyclesAmount = 0;
+    CyclesList *cycles = createCyclesList();
     for (size_t i = 0; i < graph->size + 5; i++) { // loop with overflow
         size_t visited[graph->size];
         memset(visited, 0, sizeof(visited));
-        getLongestCycle(graph, i, visited, i, cycles, &cyclesAmount);
+        List *list = createList();
+        getLongestCycleFromNode(graph, i, list, visited, i, cycles);
+        freeList(list);
     }
-    freeList(cycles[0]);
-    freeList(cycles[1]);
+    freeCyclesList(cycles);
     freeGraph(graph);
 }
 
