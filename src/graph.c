@@ -85,6 +85,7 @@ int getLongestCycleFromNode(Graph *graph, size_t currentIndex, List *visitedNode
     }
     popFromList(visitedNodes);
     visited[currentIndex] = 0;
+    return 0;
 }
 
 List *getLongestGraphCycle(Graph *graph) {

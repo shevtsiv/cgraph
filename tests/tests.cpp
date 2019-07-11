@@ -30,7 +30,6 @@ TEST(ListTest, AddToList) {
 }
 
 TEST(ListTest, PopFromList) {
-    // TODO: Replace manual filling with variadic constructor
     List *list = createList();
     ASSERT_EQ(list->head, nullptr);
     ASSERT_EQ(list->size, 0);
