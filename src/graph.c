@@ -99,18 +99,16 @@ void tryToVisitAllNodes(Graph *graph, size_t startIndex, size_t *visitedNodes, s
  * @param currentIndex - Number of node that starts a cycle.
  * @param visitedNodes - Array of size_t values, which uses 0 for not visited nodes and 1 for visited.
  * @param visited - Stack of visited nodes. If function finds the cycle this stack will be copied into cycles list.
- * @param startNodeData - Number of start node used for determination of end of the cycle.
  * @param cycles - Stack of stacks to store all found cycles.
  * @return 1 if cycle was found, otherwise 0 is returned.
  */
-int getAllCyclesFromNode(Graph *graph, size_t currentIndex, List *visitedNodes, size_t *visited,
-                         size_t startNodeData, CyclesList *cycles) {
+int getAllCyclesFromNode(Graph *graph, size_t currentIndex, List *visitedNodes, size_t *visited, CyclesList *cycles) {
     if (graph == NULL || currentIndex >= graph->size) {
         return 0;
     }
     ListNode *node = graph->adjacencyList[currentIndex]->head;
     if (visited[currentIndex]) {
-        if (node->data == startNodeData) {
+        if (node->data == visitedNodes->head->data) {
             addToList(visitedNodes, node->data);
             printList(visitedNodes);
             printf("\n");
@@ -125,7 +123,7 @@ int getAllCyclesFromNode(Graph *graph, size_t currentIndex, List *visitedNodes, 
     addToList(visitedNodes, node->data);
     ListNode *nextNode = node->next;
     while (nextNode != NULL) {
-        int i = getAllCyclesFromNode(graph, nextNode->data, visitedNodes, visited, startNodeData, cycles);
+        int i = getAllCyclesFromNode(graph, nextNode->data, visitedNodes, visited, cycles);
         if (i == 1) {
             popFromList(visitedNodes);
             visited[currentIndex] = 0;
@@ -152,7 +150,7 @@ List *getLongestGraphCycle(Graph *graph) {
         size_t visited[graph->size];
         memset(visited, 0, sizeof(visited));
         List *list = createList();
-        getAllCyclesFromNode(graph, i, list, visited, i, cyclesList);
+        getAllCyclesFromNode(graph, i, list, visited, cyclesList);
         freeList(list);
     }
     if (cyclesList->size == 0) {

@@ -264,7 +264,7 @@ TEST(GraphTest, GetLongestCycleFromNonExistentNodeTest) {
         size_t visited[graph->size];
         memset(visited, 0, sizeof(visited));
         List *list = createList();
-        getAllCyclesFromNode(graph, i, list, visited, i, cycles);
+        getAllCyclesFromNode(graph, i, list, visited, cycles);
         freeList(list);
     }
     freeCyclesList(cycles);
