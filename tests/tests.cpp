@@ -97,7 +97,7 @@ TEST(ListTest, FreeNullListTest) {
 TEST(GraphTest, CreateGraphTest) {
     Graph *graph = createGraph(1);
     ASSERT_NE(graph, nullptr);
-    ASSERT_NE(graph->adjacencyLists, nullptr);
+    ASSERT_NE(graph->adjacencyList, nullptr);
     ASSERT_EQ(graph->size, 1);
     freeGraph(graph);
 }
@@ -228,7 +228,7 @@ TEST(GraphTest, AddLineToNonExistentNodeTest) {
     addLine(graph, 3, 5);
     addLine(graph, 10, 20);
     addLine(graph, 2, 3);
-    ASSERT_TRUE(graph->adjacencyLists[2]->head->next == nullptr);
+    ASSERT_TRUE(graph->adjacencyList[2]->head->next == nullptr);
     freeGraph(graph);
 }
 
@@ -264,16 +264,10 @@ TEST(GraphTest, GetLongestCycleFromNonExistentNodeTest) {
         size_t visited[graph->size];
         memset(visited, 0, sizeof(visited));
         List *list = createList();
-        getLongestCycleFromNode(graph, i, list, visited, i, cycles);
+        getAllCyclesFromNode(graph, i, list, visited, i, cycles);
         freeList(list);
     }
     freeCyclesList(cycles);
-    freeGraph(graph);
-}
-
-TEST(GraphTest, PrintNullGraphTest) {
-    Graph *graph = nullptr;
-    printGraph(graph);
     freeGraph(graph);
 }
 
