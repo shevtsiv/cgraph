@@ -107,6 +107,12 @@ int getAllCyclesFromNode(Graph *graph, size_t currentIndex, List *visitedNodes, 
         return 0;
     }
     ListNode *node = graph->adjacencyList[currentIndex]->head;
+    // If number of current node is bigger than initial node number and initial node has exactly one edge
+    // then we have already found this cycle in previous iteration and there is no need to continue.
+    if (visitedNodes->head != NULL && node->edgesCount == 1 && visitedNodes->head->data > node->data) {
+        // TODO: This approach does not take into account cycles starting from node with multiple 'edgesCount'
+        return 0;
+    }
     if (visited[currentIndex]) {
         if (node->data == visitedNodes->head->data) {
             addToList(visitedNodes, node->data);
