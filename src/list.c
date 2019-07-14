@@ -1,11 +1,13 @@
 typedef struct ListNode {
     size_t data;
     struct ListNode *next;
+    struct ListNode *prev;
     size_t edgesCount;
 } ListNode;
 
 typedef struct {
     ListNode *head;
+    ListNode *tail;
     size_t size;
 } List;
 
@@ -25,14 +27,13 @@ void addToList(List *list, size_t data) {
     node->data = data;
     if (list->head == NULL) {
         list->head = node;
+        list->tail = list->head;
         list->size++;
         return;
     }
-    ListNode *tail = list->head;
-    while (tail->next != NULL) {
-        tail = tail->next;
-    }
-    tail->next = node;
+    list->tail->next = node;
+    node->prev = list->tail;
+    list->tail = node;
     list->size++;
 }
 
@@ -40,21 +41,17 @@ size_t popFromList(List *list) {
     if (list == NULL || list->head == NULL) {
         return -999;
     }
-    if (list->head->next == NULL) {
-        size_t data = list->head->data;
-        free(list->head);
-        list->head = NULL;
-        list->size = 0;
-        return data;
-    }
-    ListNode *preTail = list->head;
-    while (preTail->next->next != NULL) {
-        preTail = preTail->next;
-    }
-    size_t data = preTail->next->data;
-    free(preTail->next);
-    preTail->next = NULL;
+    ListNode *newTail = list->tail->prev;
+    size_t data = list->tail->data;
+    free(list->tail);
     list->size--;
+    if (newTail == NULL) {
+        list->head = NULL;
+        list->tail = NULL;
+    } else {
+        newTail->next = NULL;
+        list->tail = newTail;
+    }
     return data;
 }
 
