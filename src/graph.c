@@ -6,7 +6,7 @@
  */
 
 #include "stack.c"
-#include "cycles_list.c"
+#include "cycles_stack.c"
 #include "utils.c"
 
 /**
@@ -102,7 +102,7 @@ void tryToVisitAllNodes(Graph *graph, size_t startIndex, size_t *visitedNodes, s
  * @param cycles - Stack of stacks to store all found cycles.
  * @return 1 if cycle was found, otherwise 0 is returned.
  */
-int getAllCyclesFromNode(Graph *graph, size_t currentIndex, Stack *visitedNodes, size_t *visited, CyclesList *cycles) {
+int getAllCyclesFromNode(Graph *graph, size_t currentIndex, Stack *visitedNodes, size_t *visited, CyclesStack *cycles) {
     if (graph == NULL || currentIndex >= graph->size) {
         return 0;
     }
@@ -118,7 +118,7 @@ int getAllCyclesFromNode(Graph *graph, size_t currentIndex, Stack *visitedNodes,
             pushToStack(visitedNodes, node->data);
             printStack(visitedNodes);
             printf("\n");
-            addToCyclesList(cycles, makeStackCopy(visitedNodes));
+            pushToCyclesStack(cycles, makeStackCopy(visitedNodes));
             return 1;
         }
         if (node->edgesCount == 1) {
@@ -151,7 +151,7 @@ Stack *getLongestGraphCycle(Graph *graph) {
     if (graph == NULL) {
         return NULL;
     }
-    CyclesList *cyclesList = createCyclesList();
+    CyclesStack *cyclesList = createCyclesList();
     for (size_t i = 0; i < graph->size; i++) {
         size_t visited[graph->size];
         memset(visited, 0, sizeof(visited));
@@ -164,7 +164,7 @@ Stack *getLongestGraphCycle(Graph *graph) {
         return NULL;
     }
     Stack *maxLengthCycle = makeStackCopy(cyclesList->head->data);
-    CyclesListNode *temp = cyclesList->head->next;
+    CyclesStackNode *temp = cyclesList->head->next;
     while (temp != NULL) {
         if (temp->data->size > maxLengthCycle->size) {
             freeStack(maxLengthCycle);
