@@ -3,93 +3,93 @@
 #include "../src/graph.c"
 #include "test_utils.cpp"
 
-// List tests =========================
+// Stack tests =========================
 
 TEST(ListTest, CreateListTest) {
-    List *list = createList();
-    ASSERT_NE(list, nullptr);
-    ASSERT_EQ(list->head, nullptr);
-    free(list);
+    Stack *stack = createStack();
+    ASSERT_NE(stack, nullptr);
+    ASSERT_EQ(stack->head, nullptr);
+    free(stack);
 }
 
 TEST(ListTest, AddToList) {
-    List *list = createList();
-    ASSERT_EQ(list->head, nullptr);
-    ASSERT_EQ(list->size, 0);
-    addToList(list, 1);
-    ASSERT_NE(list->head, nullptr);
-    ASSERT_EQ(list->head->data, 1);
-    ASSERT_EQ(list->size, 1);
-    addToList(list, 2);
-    ASSERT_EQ(list->head->data, 1);
-    ASSERT_EQ(list->size, 2);
-    addToList(list, 5);
-    ASSERT_EQ(list->head->data, 1);
-    ASSERT_EQ(list->size, 3);
-    freeList(list);
+    Stack *stack = createStack();
+    ASSERT_EQ(stack->head, nullptr);
+    ASSERT_EQ(stack->size, 0);
+    pushToStack(stack, 1);
+    ASSERT_NE(stack->head, nullptr);
+    ASSERT_EQ(stack->head->data, 1);
+    ASSERT_EQ(stack->size, 1);
+    pushToStack(stack, 2);
+    ASSERT_EQ(stack->head->data, 1);
+    ASSERT_EQ(stack->size, 2);
+    pushToStack(stack, 5);
+    ASSERT_EQ(stack->head->data, 1);
+    ASSERT_EQ(stack->size, 3);
+    freeStack(stack);
 }
 
 TEST(ListTest, PopFromList) {
-    List *list = createList();
-    ASSERT_EQ(list->head, nullptr);
-    ASSERT_EQ(list->size, 0);
-    addToList(list, 1);
-    ASSERT_NE(list->head, nullptr);
-    ASSERT_EQ(list->head->data, 1);
-    ASSERT_EQ(list->size, 1);
-    addToList(list, 2);
-    ASSERT_EQ(list->head->data, 1);
-    ASSERT_EQ(list->size, 2);
-    addToList(list, 5);
-    ASSERT_EQ(list->head->data, 1);
-    ASSERT_EQ(list->size, 3);
+    Stack *stack = createStack();
+    ASSERT_EQ(stack->head, nullptr);
+    ASSERT_EQ(stack->size, 0);
+    pushToStack(stack, 1);
+    ASSERT_NE(stack->head, nullptr);
+    ASSERT_EQ(stack->head->data, 1);
+    ASSERT_EQ(stack->size, 1);
+    pushToStack(stack, 2);
+    ASSERT_EQ(stack->head->data, 1);
+    ASSERT_EQ(stack->size, 2);
+    pushToStack(stack, 5);
+    ASSERT_EQ(stack->head->data, 1);
+    ASSERT_EQ(stack->size, 3);
 
-    ASSERT_EQ(popFromList(list), 5);
-    ASSERT_EQ(list->head->data, 1);
-    ASSERT_EQ(list->size, 2);
-    ASSERT_EQ(popFromList(list), 2);
-    ASSERT_EQ(list->head->data, 1);
-    ASSERT_EQ(list->size, 1);
-    ASSERT_EQ(popFromList(list), 1);
-    ASSERT_EQ(list->head, nullptr);
-    ASSERT_EQ(list->size, 0);
-    ASSERT_EQ(popFromList(list), -999);
-    free(list);
+    ASSERT_EQ(popFromStack(stack), 5);
+    ASSERT_EQ(stack->head->data, 1);
+    ASSERT_EQ(stack->size, 2);
+    ASSERT_EQ(popFromStack(stack), 2);
+    ASSERT_EQ(stack->head->data, 1);
+    ASSERT_EQ(stack->size, 1);
+    ASSERT_EQ(popFromStack(stack), 1);
+    ASSERT_EQ(stack->head, nullptr);
+    ASSERT_EQ(stack->size, 0);
+    ASSERT_EQ(popFromStack(stack), -999);
+    free(stack);
 }
 
 TEST(ListTest, MakeListCopyTest) {
-    List *list = createList();
-    addToList(list, 1);
-    addToList(list, 2);
-    addToList(list, 5);
-    List *copy = makeCopy(list);
-    addToList(list, 10);
-    addToList(list, 20);
-    addToList(list, 30);
-    ASSERT_TRUE(popFromList(copy) == 5);
-    ASSERT_TRUE(popFromList(copy) == 2);
-    ASSERT_TRUE(popFromList(copy) == 1);
-    ASSERT_TRUE(popFromList(copy) == -999);
-    freeList(copy);
-    freeList(list);
+    Stack *stack = createStack();
+    pushToStack(stack, 1);
+    pushToStack(stack, 2);
+    pushToStack(stack, 5);
+    Stack *copy = makeStackCopy(stack);
+    pushToStack(stack, 10);
+    pushToStack(stack, 20);
+    pushToStack(stack, 30);
+    ASSERT_TRUE(popFromStack(copy) == 5);
+    ASSERT_TRUE(popFromStack(copy) == 2);
+    ASSERT_TRUE(popFromStack(copy) == 1);
+    ASSERT_TRUE(popFromStack(copy) == -999);
+    freeStack(copy);
+    freeStack(stack);
 }
 
 TEST(ListTest, NullListToArrayTest) {
-    List *list = nullptr;
+    Stack *stack = nullptr;
     size_t array[10];
-    toArray(list, array);
-    freeList(list);
+    toArray(stack, array);
+    freeStack(stack);
 }
 
 TEST(ListTest, PrintNullListTest) {
-    List *list = nullptr;
-    printList(list);
-    freeList(list);
+    Stack *stack = nullptr;
+    printStack(stack);
+    freeStack(stack);
 }
 
 TEST(ListTest, FreeNullListTest) {
-    List *list = nullptr;
-    freeList(list);
+    Stack *stack = nullptr;
+    freeStack(stack);
 }
 
 // Graph tests ========================
@@ -145,11 +145,11 @@ TEST(GraphTest, CheckGraphCyclesTest) {
     addLine(cyclic, 1, 6);
     addLine(cyclic, 6, 0);
 
-    List *longestCycle = getLongestGraphCycle(cyclic);
+    Stack *longestCycle = getLongestGraphCycle(cyclic);
     size_t cycleInArray[10];
     toArray(longestCycle, cycleInArray);
     ASSERT_THAT(cycleInArray, testing::ElementsAre(0, 1, 2, 3, 4, 3, 5, 1, 6, 0));
-    freeList(longestCycle);
+    freeStack(longestCycle);
     freeGraph(cyclic);
 }
 
@@ -165,29 +165,29 @@ TEST(GraphTest, LongestCycleNotFromFirstNodeTest) {
     addLine(cyclic, 6, 1);
     addLine(cyclic, 0, 7);
     addLine(cyclic, 7, 0);
-    List *longestCycle = getLongestGraphCycle(cyclic);
+    Stack *longestCycle = getLongestGraphCycle(cyclic);
     size_t cycleInArray[8];
     toArray(longestCycle, cycleInArray);
     ASSERT_THAT(cycleInArray, testing::ElementsAre(1, 2, 3, 4, 3, 5, 6, 1));
-    freeList(longestCycle);
+    freeStack(longestCycle);
     freeGraph(cyclic);
 }
 
 TEST(GraphTest, GetLongestCycleOnSelfTest) {
     Graph *cyclic = createGraph(1);
     addLine(cyclic, 0, 0);
-    List *longestCycle = getLongestGraphCycle(cyclic);
+    Stack *longestCycle = getLongestGraphCycle(cyclic);
     size_t cycleInArray[2];
     toArray(longestCycle, cycleInArray);
     ASSERT_THAT(cycleInArray, testing::ElementsAre(0, 0));
-    freeList(longestCycle);
+    freeStack(longestCycle);
     freeGraph(cyclic);
 }
 
 TEST(GraphTest, NoCycleTest) {
     Graph *cyclic = createGraph(2);
     addLine(cyclic, 0, 1);
-    List *longestCycle = getLongestGraphCycle(cyclic);
+    Stack *longestCycle = getLongestGraphCycle(cyclic);
     ASSERT_TRUE(longestCycle == nullptr);
     freeGraph(cyclic);
 }
@@ -214,12 +214,12 @@ TEST(GraphTest, LongCycleGraphTest) {
     addLine(cyclic, 15, 16);
     addLine(cyclic, 16, 0);
 
-    List *longestCycle = getLongestGraphCycle(cyclic);
+    Stack *longestCycle = getLongestGraphCycle(cyclic);
     size_t cycleInArray[18];
     toArray(longestCycle, cycleInArray);
     size_t expectedCycle[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 4, 14, 15, 16, 0};
     ASSERT_TRUE(arraysCompare(cycleInArray, expectedCycle, 18));
-    freeList(longestCycle);
+    freeStack(longestCycle);
     freeGraph(cyclic);
 }
 
@@ -242,11 +242,11 @@ TEST(GraphTest, TwoEqualCyclesTest) {
     addLine(graph, 3, 4);
     addLine(graph, 4, 0);
 
-    List *longestCycle = getLongestGraphCycle(graph);
+    Stack *longestCycle = getLongestGraphCycle(graph);
     size_t cycleInArray[7];
     toArray(longestCycle, cycleInArray);
     ASSERT_THAT(cycleInArray, testing::ElementsAre(1, 2, 0, 3, 4, 0, 1));
-    freeList(longestCycle);
+    freeStack(longestCycle);
     freeGraph(graph);
 }
 
@@ -263,9 +263,9 @@ TEST(GraphTest, GetLongestCycleFromNonExistentNodeTest) {
     for (size_t i = 0; i < graph->size + 5; i++) { // loop with overflow
         size_t visited[graph->size];
         memset(visited, 0, sizeof(visited));
-        List *list = createList();
-        getAllCyclesFromNode(graph, i, list, visited, cycles);
-        freeList(list);
+        Stack *stack = createStack();
+        getAllCyclesFromNode(graph, i, stack, visited, cycles);
+        freeStack(stack);
     }
     freeCyclesList(cycles);
     freeGraph(graph);

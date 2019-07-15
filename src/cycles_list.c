@@ -1,5 +1,5 @@
 typedef struct CyclesListNode {
-    List *data;
+    Stack *data;
     struct CyclesListNode *next;
 } CyclesListNode;
 
@@ -13,7 +13,7 @@ CyclesList *createCyclesList() {
     return cyclesList;
 }
 
-void addToCyclesList(CyclesList *cyclesList, List *list) {
+void addToCyclesList(CyclesList *cyclesList, Stack *stack) {
     if (cyclesList == NULL) {
         return;
     }
@@ -21,7 +21,7 @@ void addToCyclesList(CyclesList *cyclesList, List *list) {
     if (node == NULL) {
         return;
     }
-    node->data = list;
+    node->data = stack;
     if (cyclesList->head == NULL) {
         cyclesList->head = node;
         cyclesList->size++;
@@ -42,7 +42,7 @@ void freeCyclesList(CyclesList *list) {
     CyclesListNode *node = list->head;
     while (node != NULL) {
         CyclesListNode *next = node->next;
-        freeList(node->data);
+        freeStack(node->data);
         free(node);
         node = next;
     }

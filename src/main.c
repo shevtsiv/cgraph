@@ -71,15 +71,15 @@ int main() {
     } else {
         printf("Graph is not connected!\n");
     }
-    List *longestGraphCycle = getLongestGraphCycle(graph);
+    Stack *longestGraphCycle = getLongestGraphCycle(graph);
     if (longestGraphCycle != NULL) {
         printf("Longest graph cycle is:\n");
-        printList(longestGraphCycle);
+        printStack(longestGraphCycle);
         printf("\n");
     } else {
         printf("Graph has no cycles!\n");
     }
-    freeList(longestGraphCycle);
+    freeStack(longestGraphCycle);
     freeGraph(graph);
     return 0;
 }

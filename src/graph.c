@@ -5,7 +5,7 @@
  * The main algorithm represented here is finding the longest cycle in this graph.
  */
 
-#include "list.c"
+#include "stack.c"
 #include "cycles_list.c"
 #include "utils.c"
 
@@ -16,14 +16,14 @@
  */
 typedef struct {
     size_t size;
-    List **adjacencyList;
+    Stack **adjacencyList;
 } Graph;
 
 /**
  * This function is responsible for creating a graph with given nodes amount.
  * @param nodesAmount - Amount of nodes in a graph.
  * @return Graph* - if all the allocations have been done successfully.
- * @return NULL - if there were problems with allocations for Graph structure or adjacency list for it.
+ * @return NULL - if there were problems with allocations for Graph structure or adjacency stack for it.
  */
 Graph *createGraph(size_t nodesAmount) {
     Graph *graph = (Graph *) malloc(sizeof(Graph));
@@ -31,20 +31,20 @@ Graph *createGraph(size_t nodesAmount) {
         return NULL;
     }
     graph->size = nodesAmount;
-    graph->adjacencyList = (List **) malloc(sizeof(List *) * nodesAmount);
+    graph->adjacencyList = (Stack **) malloc(sizeof(Stack *) * nodesAmount);
     if (graph->adjacencyList == NULL) {
         free(graph);
         return NULL;
     }
     for (size_t i = 0; i < nodesAmount; i++) {
-        List *list = createList();
-        if (list == NULL) {
+        Stack *stack = createStack();
+        if (stack == NULL) {
             free(graph->adjacencyList);
             free(graph);
             return NULL;
         }
-        graph->adjacencyList[i] = list;
-        addToList(graph->adjacencyList[i], i);
+        graph->adjacencyList[i] = stack;
+        pushToStack(graph->adjacencyList[i], i);
     }
     return graph;
 }
@@ -61,7 +61,7 @@ void addLine(Graph *graph, size_t sourceIndex, size_t destinationIndex) {
         return;
     }
     graph->adjacencyList[sourceIndex]->head->edgesCount++;
-    addToList(graph->adjacencyList[sourceIndex], destinationIndex);
+    pushToStack(graph->adjacencyList[sourceIndex], destinationIndex);
 }
 
 /**
@@ -82,7 +82,7 @@ void tryToVisitAllNodes(Graph *graph, size_t startIndex, size_t *visitedNodes, s
     if (graph == NULL || startIndex >= graph->size || visitedNodes[startIndex] == 1) {
         return;
     }
-    ListNode *nextNode = graph->adjacencyList[startIndex]->head->next;
+    StackNode *nextNode = graph->adjacencyList[startIndex]->head->next;
     if (nextNode == NULL && iteration != 0) { // It is OK if we cannot access some node on the first iteration
         return;
     }
@@ -98,15 +98,15 @@ void tryToVisitAllNodes(Graph *graph, size_t startIndex, size_t *visitedNodes, s
  * @param graph - Graph in which current node is located.
  * @param currentIndex - Number of node that starts a cycle.
  * @param visitedNodes - Array of size_t values, which uses 0 for not visited nodes and 1 for visited.
- * @param visited - Stack of visited nodes. If function finds the cycle this stack will be copied into cycles list.
+ * @param visited - Stack of visited nodes. If function finds the cycle this stack will be copied into cycles stack.
  * @param cycles - Stack of stacks to store all found cycles.
  * @return 1 if cycle was found, otherwise 0 is returned.
  */
-int getAllCyclesFromNode(Graph *graph, size_t currentIndex, List *visitedNodes, size_t *visited, CyclesList *cycles) {
+int getAllCyclesFromNode(Graph *graph, size_t currentIndex, Stack *visitedNodes, size_t *visited, CyclesList *cycles) {
     if (graph == NULL || currentIndex >= graph->size) {
         return 0;
     }
-    ListNode *node = graph->adjacencyList[currentIndex]->head;
+    StackNode *node = graph->adjacencyList[currentIndex]->head;
     // If number of current node is bigger than initial node number and initial node has exactly one edge
     // then we have already found this cycle in previous iteration and there is no need to continue.
     if (visitedNodes->head != NULL && node->edgesCount == 1 && visitedNodes->head->data > node->data) {
@@ -115,10 +115,10 @@ int getAllCyclesFromNode(Graph *graph, size_t currentIndex, List *visitedNodes, 
     }
     if (visited[currentIndex]) {
         if (node->data == visitedNodes->head->data) {
-            addToList(visitedNodes, node->data);
-            printList(visitedNodes);
+            pushToStack(visitedNodes, node->data);
+            printStack(visitedNodes);
             printf("\n");
-            addToCyclesList(cycles, makeCopy(visitedNodes));
+            addToCyclesList(cycles, makeStackCopy(visitedNodes));
             return 1;
         }
         if (node->edgesCount == 1) {
@@ -126,17 +126,17 @@ int getAllCyclesFromNode(Graph *graph, size_t currentIndex, List *visitedNodes, 
         }
     }
     visited[currentIndex] = 1;
-    addToList(visitedNodes, node->data);
-    ListNode *nextNode = node->next;
+    pushToStack(visitedNodes, node->data);
+    StackNode *nextNode = node->next;
     while (nextNode != NULL) {
         int i = getAllCyclesFromNode(graph, nextNode->data, visitedNodes, visited, cycles);
         if (i == 1) {
-            popFromList(visitedNodes);
+            popFromStack(visitedNodes);
             visited[currentIndex] = 0;
         }
         nextNode = nextNode->next;
     }
-    popFromList(visitedNodes);
+    popFromStack(visitedNodes);
     visited[currentIndex] = 0;
     return 0;
 }
@@ -147,7 +147,7 @@ int getAllCyclesFromNode(Graph *graph, size_t currentIndex, List *visitedNodes, 
  * @param graph - Graph where longest cycle is located.
  * @return - Stack with all nodes that form longest cycle or NULL if there are no cycles.
  */
-List *getLongestGraphCycle(Graph *graph) {
+Stack *getLongestGraphCycle(Graph *graph) {
     if (graph == NULL) {
         return NULL;
     }
@@ -155,20 +155,20 @@ List *getLongestGraphCycle(Graph *graph) {
     for (size_t i = 0; i < graph->size; i++) {
         size_t visited[graph->size];
         memset(visited, 0, sizeof(visited));
-        List *list = createList();
-        getAllCyclesFromNode(graph, i, list, visited, cyclesList);
-        freeList(list);
+        Stack *stack = createStack();
+        getAllCyclesFromNode(graph, i, stack, visited, cyclesList);
+        freeStack(stack);
     }
     if (cyclesList->size == 0) {
         freeCyclesList(cyclesList);
         return NULL;
     }
-    List *maxLengthCycle = makeCopy(cyclesList->head->data);
+    Stack *maxLengthCycle = makeStackCopy(cyclesList->head->data);
     CyclesListNode *temp = cyclesList->head->next;
     while (temp != NULL) {
         if (temp->data->size > maxLengthCycle->size) {
-            freeList(maxLengthCycle);
-            maxLengthCycle = makeCopy(temp->data);
+            freeStack(maxLengthCycle);
+            maxLengthCycle = makeStackCopy(temp->data);
         }
         temp = temp->next;
     }
@@ -202,7 +202,7 @@ void freeGraph(Graph *graph) {
         return;
     }
     for (size_t i = 0; i < graph->size; i++) {
-        freeList(graph->adjacencyList[i]);
+        freeStack(graph->adjacencyList[i]);
     }
     free(graph->adjacencyList);
     free(graph);
